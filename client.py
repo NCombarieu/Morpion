@@ -1,7 +1,6 @@
-# coding: utf-8
 #!/usr/bin/env python3
 
-import socket
+import socket, sys
 import time
 
 def send():
@@ -14,7 +13,7 @@ def send():
 
 # define host and port
 host = "localhost"
-port = 15555
+port = int(sys.argv[1])
 
 # create socket
 socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,14 +24,14 @@ print("Connection on {}".format(port))
 
 # receive data from server
 data = socket.recv(255)
-print(data)
+print("1: ", data)
 
 # send data to server
   # tant que data est differen de you loose ou you win
-while data != b'0' and data != b'1':
+while data != '0' and data != '1':
     data = socket.recv(255)
-    print(data)
-    if data != b'0' and data != b'1':
+    print("2 : ", data)
+    if data != '0' and data != '1':
         send()
 if data == b'0':
     print("You win")

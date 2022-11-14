@@ -1,22 +1,29 @@
-# coding: utf-8
 #!/usr/bin/env python3
 from grid import *
-import socket
+import socket, select, pickle, sys
 import  random
 
-socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-socket.bind(('', 15555))
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt (socket.SOL_SOCKET , socket.SO_REUSEADDR , 1)
+s.bind(('localhost', 7777))
+s.listen(2)
 
+players=[]
+    
 while True:
-    socket.listen(5)
-    client, address = socket.accept()
-    print("{} connected".format(address))
-    data = "Hello World!"
-    client.send(data.encode())
+    while len(players) < 2:
+        listL, _, _ = select.select(players+[s],[],[])
+        for ss in listL:
+            if s==ss:
+                sc , a = s.accept ()
+                print("{} connected".format(a))
+                sc.sendall(pickle.dumps([players[ss],len(players)]))	
+                players.append(sc)
 
     grids = [grid(), grid(), grid()]
     current_player = J1
     grids[J1].display()
+
     while grids[0].gameOver() == -1:
         if current_player == J1:
             shot = -1
@@ -25,7 +32,9 @@ while True:
                 client.send(data.encode())
                 shot = int(client.recv(255))
         else:
-            shot = random.randint(0, 8)
+            current_player = J2
+
+            shot = int(client.recv(255))
             while grids[current_player].cells[shot] != EMPTY:
                 shot = random.randint(0, 8)
         if (grids[0].cells[shot] != EMPTY):
