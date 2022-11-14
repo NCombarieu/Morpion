@@ -1,7 +1,7 @@
-#!/usr/bin/python3
+#!/usr/bin/python3     
 
 from grid import *
-import  random
+import random
 
 def main():
     grids = [grid(), grid(), grid()]
@@ -27,8 +27,8 @@ def main():
     print("game over")
     grids[0].display()
     if grids[0].gameOver() == J1:
-        print("You win !")
+        print("Tu as gagné !")
     else:
-        print("you loose !")
+        print("Tu as perdu !")
 
 main()
