@@ -1,43 +1,44 @@
 #!/usr/bin/env python3
 
 import socket, sys
-import time
-
-def send():
-    dataReceivedByTheServer = input("Enter a number between 0 et 8: ")
-    if 0 <= int(dataReceivedByTheServer) <= 8:
-        socket.send(dataReceivedByTheServer.encode())
-    else:
-        send()
-
+from common import *
 
 # define host and port
-host = "localhost"
-port = int(sys.argv[1])
+if len(sys.argv) != 3:
+    print("Usage : python3 client.py host (localhost) port (50000)")
+    exit()
+else:
+    host = sys.argv[1]
+    port = int(sys.argv[2])
 
 # create socket
-socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # connect to server
-socket.connect((host, port))
-print("Connection on {}".format(port))
+s.connect((host, port))
 
-# receive data from server
-data = socket.recv(255)
-print("1: ", data)
+while True:
+    """ Receive the message from the server """
+    # receive action from server
+    action = s.recv(1)
+    # Si le serveur est fermé, on quitte
+    if action == b"":
+        break
+    # decode action
+    action = int(action.decode())
 
-# send data to server
-  # tant que data est differen de you loose ou you win
-while data != '0' and data != '1':
-    data = socket.recv(255)
-    print("2 : ", data)
-    if data != '0' and data != '1':
-        send()
-if data == b'0':
-    print("You win")
-if data == b'1':
-    print("You loose")
+    if action == SHOW_GRID:
+        grid = s.recv(98).decode()
+        print(grid)
+    elif action == GET_CLIENT_SHOT:
+        s.send(input("Quelle case voulez-vous jouer ?").encode("utf-8"))
+    elif action == WINNER:
+        print("You WIN !")
+    elif action == LOOSER:
+        print("You Loose noob !")
+    elif action == REPLAY:
+        s.send(input("Voulez-vous rejouer ? (Y / N)\n").encode("utf-8"))
 
 # close socket
 print("Close")
-socket.close()
+s.close()
