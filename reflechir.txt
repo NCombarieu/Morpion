@@ -1,0 +1,34 @@
+Client:
+
+Tant que la partie n'est pas terminée :
+    Récupérer l'état de la grid[0]
+    Si c'est client 1:
+        Récupérer l'état de la grid[1] aupres du serveur
+        Afficher l'état de la grid[1] --> coté client
+        Demander sur quelle case il veut jouer
+        case = -1
+        Tant que case n'est pas entre 0 et 8:
+            case = input()
+        Envoyer la case au serveur
+        
+        Verifier si la case est vide sur grid[0]
+            Si oui:
+                placer le pion "O" sur grid[0] et grid [1]
+                Envoyer au serveur le shot (donc lui va l'ajouter a grid[0])
+                Afficher la grid[1]
+                client devient 2
+
+            Sinon, afficher "Case déjà prise"
+
+    Sinon, c'est client 2:
+        Jouer sur grid[2]
+            Verifier si la case existe
+                Verifier si la case est vide sur grid[0]
+                    Si oui:
+                        placer le pion "X" sur grid[0] et grid [2]
+                        Envoyer au serveur le shot (donc lui va l'ajouter a grid[0])
+                        Afficher la grid[2]
+                        client devient 1
+                    Sinon, afficher "Case déjà prise"
+                Sinon, afficher "Case inexistante"
+    
