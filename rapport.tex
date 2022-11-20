@@ -151,7 +151,7 @@ while rejouer:
     """Main loop"""
     grids = [grid(), grid(), grid()]
     current_player = J1
-    send_score(current_player, score)
+    
     while grids[0].gameOver() == -1:
         """ Game loop """
         player_send_grid(current_player, grids[current_player])
@@ -175,7 +175,7 @@ while rejouer:
         else:
             send_loose_to_player(player)
 
-    #rejouer = False
+    send_score(current_player, score)
     rejouer = request_replay()
             
 print("Partie terminée, les joueurs ne veulent pas rejouer\n")
