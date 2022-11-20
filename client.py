@@ -44,6 +44,9 @@ while True:
         print("You WIN !")
     elif action == LOOSER:
         print("You Loose noob !")
+    elif action == SCORE:
+        score = sc.recv(22).decode()
+        print(score)
     elif action == REPLAY:
         sc.send(input("Voulez-vous rejouer ? (Y / N)\n").encode("utf-8"))
 

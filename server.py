@@ -30,6 +30,13 @@ def send_loose_to_player(current_player):
     sc = clients[current_player-1]
     sc.send(str(LOOSER).encode())
 
+def send_score(current_player, Score):
+    """ Send the score to the players """
+    sc = clients[current_player-1]
+    sc.send(str(SCORE).encode())
+    score = "Score : J1 = " + str(Score[J1-1]) + " J2 = " + str(Score[J2-1]) + "\n"
+    sc.send(score.encode())
+
 def request_replay():
     """ Ask the players if they want to replay """
     for player in [J1, J2]:
@@ -74,11 +81,13 @@ while len(clients) < 2:
             print("Client connecté : " + str(addr))
 
 rejouer = True
+score = [0, 0]
 
 while rejouer:
     """Main loop"""
     grids = [grid(), grid(), grid()]
     current_player = J1
+    send_score(current_player, score)
     while grids[0].gameOver() == -1:
         """ Game loop """
         player_send_grid(current_player, grids[current_player])
@@ -97,6 +106,7 @@ while rejouer:
 
     for player in [J1, J2]:
         if grids[0].gameOver() == player:
+            score[player-1] += 1
             send_win_to_player(player)
         else:
             send_loose_to_player(player)

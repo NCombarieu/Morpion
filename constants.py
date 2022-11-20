@@ -10,6 +10,7 @@ SHOW_GRID = 4
 WINNER = 5
 LOOSER = 6
 REPLAY = 7
+SCORE = 8
 
 
 
