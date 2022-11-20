@@ -1,11 +1,4 @@
-
-
-
-symbols = [' ', 'O', 'X']
-EMPTY = 0
-J1 = 1
-J2 = 2
-NB_CELLS=9
+from constants import *
 
 class grid:
     cells = []
@@ -34,6 +27,13 @@ class grid:
         for i in range(3):
             print("|",symbols[self.cells[i*3]], "|",  symbols[self.cells[i*3+1]], "|",  symbols[self.cells[i*3+2]], "|");
             print("-------------")
+
+    def sendDisplay(self):
+        output = "-------------\n"
+        for i in range(3):
+            output += "| " + symbols[self.cells[i*3]] + " | " + symbols[self.cells[i*3+1]] + " | " +  symbols[self.cells[i*3+2]] + " |\n"
+            output += "-------------\n"
+        return output
 
 
     """ Test if 'player' wins the game"""
