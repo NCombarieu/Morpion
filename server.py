@@ -6,7 +6,7 @@ from constants import *
 
 ############################################################################################################
 def player_shot(current_player):
-    """ Ask the player to play and return the cell number """
+    """ Ask the player to play and return the case number """
     sc = clients[current_player-1]
     shot = -1
     while shot <0 or shot >=NB_CELLS:
@@ -46,7 +46,7 @@ def request_replay():
             return False
     return True
         
-############################################################################################################
+############################################################################
 
 #Create a TCP/IP socket
 try:
@@ -79,6 +79,8 @@ while len(clients) < 2:
             client, addr = s.accept()
             clients.append(client)
             print("Client connecté : " + str(addr))
+
+############################################################################
 
 rejouer = True
 score = [0, 0]
