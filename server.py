@@ -5,6 +5,23 @@ from grid import *
 from constants import *
 
 ############################################################################################################
+def new_client(sc):
+    """ Add a new client to the list """
+    clients.append(sc)
+    print("Nouvelle connexion !")
+    if len(clients) == 2:
+        print("Deux joueurs connectés, on peut commencer la partie !")
+        start_game()
+    elif len(clients) > 2:
+        print("Un spectateur vient de se connecter !")
+        sc.send(str(SPECTATOR).encode())
+    else:
+        print("En attente d'un autre joueur...")
+        sc.send(str(WAITING).encode())
+        
+        
+
+
 def player_shot(current_player):
     """ Ask the player to play and return the case number """
     sc = clients[current_player-1]
@@ -79,6 +96,7 @@ while len(clients) < 2:
             client, addr = s.accept()
             clients.append(client)
             print("Client connecté : " + str(addr))
+            s.send(str(NEW_PLAYER).encode())
 
 ############################################################################
 
