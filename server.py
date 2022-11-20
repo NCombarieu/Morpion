@@ -95,7 +95,7 @@ while len(clients) < 2:
             client, addr = s.accept()
             clients.append(client)
             print("Client connecté : " + str(addr))
-            s.send(str(NEW_PLAYER).encode())
+            #s.send(str(NEW_PLAYER).encode())
 
 ############################################################################
 
@@ -106,7 +106,6 @@ while rejouer:
     """Main loop"""
     grids = [grid(), grid(), grid()]
     current_player = J1
-    send_score(current_player, score)
     while grids[0].gameOver() == -1:
         """ Game loop """
         player_send_grid(current_player, grids[current_player])
@@ -129,8 +128,7 @@ while rejouer:
             send_win_to_player(player)
         else:
             send_loose_to_player(player)
-
-    #rejouer = False
+    send_score(current_player, score)
     rejouer = request_replay()
             
 

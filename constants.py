@@ -11,6 +11,8 @@ WINNER = 5
 LOOSER = 6
 REPLAY = 7
 SCORE = 8
+NEW_PLAYER = 9
+
 
 
 

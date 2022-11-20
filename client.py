@@ -38,12 +38,14 @@ while True:
     if action == SHOW_GRID:
         grid = sc.recv(98).decode()
         print(grid)
+    elif action == NEW_PLAYER:
+        print("Nouveau joueur connecté")
     elif action == GET_CLIENT_SHOT:
         sc.send(input("Quelle case voulez-vous jouer ?").encode("utf-8"))
     elif action == WINNER:
-        print("You WIN !")
+        print("Vous avez gagné !")
     elif action == LOOSER:
-        print("You Loose noob !")
+        print("Vous avez perdu !")
     elif action == SCORE:
         score = sc.recv(22).decode()
         print(score)
