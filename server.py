@@ -5,6 +5,7 @@ from grid import *
 from constants import *
 
 ############################################################################################################
+
 def new_client(sc):
     """ Add a new client to the list """
     clients.append(sc)
@@ -19,9 +20,7 @@ def new_client(sc):
         print("En attente d'un autre joueur...")
         sc.send(str(WAITING).encode())
         
-        
-
-
+     
 def player_shot(current_player):
     """ Ask the player to play and return the case number """
     sc = clients[current_player-1]
@@ -65,7 +64,7 @@ def request_replay():
         
 ############################################################################
 
-#Create a TCP/IP socket
+# Create a TCP/IP socket
 try:
     ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ss.setsockopt(socket.SOL_SOCKET , socket.SO_REUSEADDR , 1)
@@ -76,7 +75,7 @@ except socket.error as msg:
 HOST = 'localhost'
 PORT = 50000
 
-#Bind the socket to the port
+# Bind the socket to the port
 try:
     ss.bind((HOST, PORT))
     ss.listen(2)
