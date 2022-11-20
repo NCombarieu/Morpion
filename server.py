@@ -46,12 +46,14 @@ def send_loose_to_player(current_player):
     sc = clients[current_player-1]
     sc.send(str(LOOSER).encode())
 
-def send_score(current_player, Score):
+def send_score(Score):
     """ Send the score to the players """
-    sc = clients[current_player-1]
-    sc.send(str(SCORE).encode())
-    score = "Score : J1 = " + str(Score[J1-1]) + " J2 = " + str(Score[J2-1]) + "\n"
-    sc.send(score.encode())
+    for player in [J1, J2]:
+        sc = clients[player-1]
+        sc.send(str(SCORE).encode())
+        score = "Score : J1 = " + str(Score[J1-1]) + " J2 = " + str(Score[J2-1]) + "\n"
+        sc.send(score.encode())
+    
 
 def request_replay():
     """ Ask the players if they want to replay """
@@ -61,6 +63,7 @@ def request_replay():
         if sc.recv(1).decode() != "Y":
             return False
     return True
+
         
 ############################################################################
 
@@ -128,7 +131,7 @@ while rejouer:
             send_win_to_player(player)
         else:
             send_loose_to_player(player)
-    send_score(current_player, score)
+    send_score(score)
     rejouer = request_replay()
             
 
