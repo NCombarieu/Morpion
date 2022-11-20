@@ -60,53 +60,80 @@ doit executer.\\
 J'ai ainsi le fichier constants.py qui contient les variables mot clef.\\
 Exemple : le serveur attend le tire du joueur actuel, le serveur envoie au client le mot clef "GET\textunderscore CLIENT\textunderscore SHOT" :\\
 \begin{lstlisting}
-    #!/usr/bin/python3
-    # PATH: server.py
-    from constants import *
+#!/usr/bin/python3
+# PATH: server.py
+from constants import *
 
-    def player_shot(current_player):
-    """ Ask the player to play and return the case number """
-    sc = clients[current_player-1]
-    shot = -1
-    while shot <0 or shot >=NB_CELLS:
-        sc.send(str(GET_CLIENT_SHOT).encode())
-        shot = int(sc.recv(1024).decode())
-    return shot
+def player_shot(current_player):
+""" Ask the player to play and return the case number """
+sc = clients[current_player-1]
+shot = -1
+while shot <0 or shot >=NB_CELLS:
+    sc.send(str(GET_CLIENT_SHOT).encode())
+    shot = int(sc.recv(1024).decode())
+return shot
 \end{lstlisting}
 Le client reste à l'ecoute de ce que le serveur lui envoie avec une boucle infinie.\\
 Si il reçoit le mot clef "GET\textunderscore CLIENT\textunderscore SHOT", il rentre dans la condition correspondant.\\
 \begin{lstlisting}
-    #!/usr/bin/python3
-    # PATH: client.py
-    from constants import *
+#!/usr/bin/python3
+# PATH: client.py
+from constants import *
 
-    while True:
-    """ Receive the message from the server """
-    # receive action from server
-    action = sc.recv(1)
+while True:
+""" Receive the message from the server """
+# receive action from server
+action = sc.recv(1)
 
-    if action == GET_CLIENT_SHOT:
-        sc.send(input("Quelle case voulez-vous jouer ?").encode("utf-8"))
+if action == GET_CLIENT_SHOT:
+    sc.send(input("Quelle case voulez-vous jouer ?").encode("utf-8"))
 \end{lstlisting}
 \newpage
 \subsection{Possibilité de rejouer et de quitter}
 Une fois la partie terminée, les joueurs peuvent rejouer sans avoir à relancer le programme.\\
 Il suffit de repondre par "Y" lorsque le programme demande si on veut rejouer en fin de partie.\\
-Si on répond par "N", le programme se ferme.\\
+Si on répond par autre chose, le programme se ferme.\\
+Le protocole mis en place envoie au client le mot clef "REPLAY" pour lui demander s'il veut rejouer et c'est le client qui pose la question.
+Le serveur retourne VRAI ou FAUX en fonction de la réponse du client.\\
+\begin{lstlisting}
+#!/usr/bin/python3
+# PATH: server.py
+def request_replay():
+    """ Ask the players if they want to replay """
+    for player in [J1, J2]:
+        sc = clients[player-1]
+        sc.send(str(REPLAY).encode())
+        if sc.recv(1).decode() != "Y":
+            return False
+    return True
+\end{lstlisting}
 
-\subsection{Comptage du score}
-Le score est affiché en début de partie.\\
+\subsection{Affichage du score}
+Le score est affiché a la fin de la partie.\\
 Il est incrémenté à chaque fois qu'un joueur gagne une partie.\\
-Il faut que les joueurs décident de rejouer pour que le score soit mis a jour.\\
+\begin{lstlisting}
+#!/usr/bin/python3
+# PATH: server.py
+def send_score(Score):
+    """ Send the score to the players """
+    for player in [J1, J2]:
+        sc = clients[player-1]
+        sc.send(str(SCORE).encode())
+        score = "Score : J1 = " + str(Score[J1-1]) + " J2 = " + str(Score[J2-1]) + "\n"
+        sc.send(score.encode())
 
-\subsection{Choix du mode de jeu}
-/!\textbackslash Le choix du mode de jeu n'est pas encore implémenté /!\textbackslash \\
-Le joueur peut choisir entre jouer contre un autre joueur ou contre l'ordinateur. 
+\end{lstlisting}
+
 \newpage
+
 \section{Présentation du code}
 \subsection{Fonctionnement du code}
 Le code est divisé en plusieurs fichiers.\\
 Le fichier \textbf{server.py} contient le code du serveur.\\
+Le fichier \textbf{client.py} contient le code du client.\\
+Le fichier \textbf{constants.py} contient les variables utilsés pour définir mon protocole d'envoie de données entre le client et le serveur.\\
+Le fichier \textbf{grid.py} contient le code de la grille.\\
+\subsubsection{server.py}
 J'ai tout d'abord mis en place la création d'une socket d'écoute pour le serveur avec de la gestion d'erreur.\\
 J'ai ensuite initialisé une liste vide qui contiendra les sockets des clients.\\
 J'ai ensuite mis en place une boucle infinie qui va permettre d'accepter la connexion de deux clients afin de pouvoir lancer la partie.\\
@@ -189,7 +216,7 @@ Si les joueurs ne souhaitent pas rejouer, je ferme la connexion avec les clients
 # fermer la socket serveur
 ss.close()
 \end{lstlisting}
-Le fichier \textbf{client.py} contient le code du client.\\
+\subsubsection{client.py}
 Lorsque le joueur lance le programme, il doit rentrer l'adresse IP et le port du serveur. Il y a une gestion d'erreur lors du lancement du programme en vérifiant le nombre de parametre rentrer.\\
 \begin{lstlisting}
     #!/usr/bin/python3
@@ -249,7 +276,7 @@ Ainsi je pourrait recevoir la grille du joueur, le message de demande de tirer, 
     elif action == REPLAY:
         sc.send(input("Voulez-vous rejouer ? (Y / N)\n").encode("utf-8"))
 \end{lstlisting}
-Le fichier \textbf{constants.py} contient les variables utilsés pour définir mon protocole d'envoie de données entre le client et le serveur.\\
+\subsubsection{constants.py}
 \begin{lstlisting}
 #!/usr/bin/python3
 # PATH: constants.py
@@ -268,7 +295,7 @@ REPLAY = 7
 SCORE = 8
 \end{lstlisting}
 
-Le fichier \textbf{grid.py} contient le code de la grille.\\
+
 J'ai dupliquer la fonction display() que j'ai appelé sendDisplay() de la grille pour pouvoir l'envoyer correctement au client avec la methode send().\\
 \begin{lstlisting}
 def sendDisplay(self):
@@ -278,6 +305,17 @@ def sendDisplay(self):
         output += "-------------\n"
     return output
 \end{lstlisting}
+
+\section{Conclusion}
+Ce projet m'a permis de découvrir le réseau et de me familiariser avec les sockets. 
+J'ai pu apprendre à utiliser les sockets en python et à créer un serveur et un client ainsi que gérer plusieurs clients à la fois.\\
+J'ai eu quelques difficultés tel que l'utilisation de git avec lequel je suis de plus en plus à l'aise,
+mais ou je n'arrive pas encore découpé mes commits pour qu'ils soient plus clairs et concis.\\
+J'ai aussi eu quelques difficultés avec la mise en place du protocole d'envoie de données entre le client et le serveur car je ne savais pas exactement
+comment le faire. Néanmoins, celui que j'ai mis en place semble correct.\\
+De plus, le travail en groupe fut compliqué car nous n'avions pas de communication régulière et même plus aucune communication à la fin du projet.\\
+En revanche j'ai pu produire une version fonctionnelle du jeu du morpion à l'aveugle en réseau avec quelques fonctionnalités de base.
+
 
 
 \end{document}
