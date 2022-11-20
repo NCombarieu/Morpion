@@ -7,8 +7,6 @@
 \usepackage{color}
 \usepackage{geometry}
 
-
-
 \lstset{
     language=python,
     basicstyle=\footnotesize,
@@ -213,7 +211,7 @@ Ensuite, je crée une socket pour le client et je me connecte au serveur. Il y a
     try:
         sc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     except socket.error as msg:
-        print("Erreur de création de la socket : " + str(msg))
+        print("Erreur de creation de la socket : " + str(msg))
         exit()
     
     # Connect the socket to the port where the server is listening
