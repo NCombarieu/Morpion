@@ -1,2 +1,10 @@
 #The pycache generated when game application start
 __pycache__/*
+game.py
+morpion.tar
+sujet.pdf
+rapport.aux
+rapport.fdb_latexmk
+rapport.fls
+rapport.log
+rapport.out
